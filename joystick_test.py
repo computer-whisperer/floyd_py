@@ -113,7 +113,7 @@ while done == False:
             textPrint.print(screen, "Button {:>2} value: {}".format(i, button))
         textPrint.unindent()
 
-        streamer.send_data({"buttons": button_vals, "axes": axis_vals})
+
 
         # Hat switch. All or nothing for direction, not like joysticks.
         # Value comes back in an array.
@@ -121,12 +121,16 @@ while done == False:
         textPrint.print(screen, "Number of hats: {}".format(hats))
         textPrint.indent()
 
+        hat_vals = []
         for i in range(hats):
             hat = joystick.get_hat(i)
+            hat_vals.append(hat)
             textPrint.print(screen, "Hat {} value: {}".format(i, str(hat)))
         textPrint.unindent()
 
         textPrint.unindent()
+
+        streamer.send_data({"buttons": button_vals, "axes": axis_vals, "hats": hat_vals})
 
     # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
 
