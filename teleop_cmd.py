@@ -1,4 +1,6 @@
+print("test")
 from sabertooth import Sabertooth
+
 from pololu import Pololu
 from micro_serial import MicroSerial
 import Adafruit_BBIO.GPIO as GPIO
@@ -12,7 +14,7 @@ controller_1 = Sabertooth(address=128)
 controller_2 = Sabertooth(address=129)
 vert_controller_1 = Pololu(address=13)
 vert_controller_2 = Pololu(address=14)
-panopticon_servo = MicroSerial(address=1)
+panopticon_servo = MicroSerial()
 claw_close_io = "P8_17"
 claw_open_io = "P8_18"
 GPIO.setup(claw_close_io, GPIO.OUT)
@@ -22,7 +24,8 @@ trim = 0
 claw_closed = False
 toggle_time = time.time()
 last_trigger = False
-pan_state = [0.5, 0.5, 0.5]
+#pan_state = [0.46943485736846924, -0.2249065786600113, -0.6046819686889648]
+pan_state = [0, 0, 0]
 
 last_time = time.time()
 while True:
@@ -36,7 +39,7 @@ while True:
     axes = data.get("axes", [0, 0, 0])
     axes = [abs(v)*v for v in axes]
     buttons = data.get("buttons", [0 for _ in range(20)])
-    povs = data.get("povs", [(0, 0)])
+    povs = data.get("hats", [(0, 0)])
 
     # Quit?
     if buttons[6]:
@@ -72,9 +75,12 @@ while True:
 
     # Panopticon
     x, y = povs[0]
-    pan_state[0] = max(0, min(pan_state[0] + x*dt*0.2, 1))
-    pan_state[1] = max(0, min(pan_state[1] + y*dt*0.2, 1))
+    pan_state[2] = max(-1, min(pan_state[2] - x*dt*0.5, 1))
+    pan_state[0] = max(-1, min(pan_state[0] - y*dt*0.5, 1))
+    #pan_state[1] = axes[2]
     panopticon_servo.set(pan_state)
+
+    #panopticon_servo.set_reset(buttons[1])
 
     # CLAW
     trigger = buttons[0]

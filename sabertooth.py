@@ -43,7 +43,7 @@ class Sabertooth():
         value = max(-1, min(value, 1))
         dir = "fwd" if value > 0 else "rev"
         power = abs(value) * 127
-        self._send_command(self.cmds[dir + "_" + motor], power)
+        self._send_command(self.cmds[dir + "_" + motor], int(power))
 
     def setRamp(self, value):
         """
